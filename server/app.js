@@ -13,17 +13,19 @@ var routes = require('./routes/index.js');
 // *** express instance *** //
 var app = express();
 
-// *** config file *** //
+// // *** config file *** //
 var config = require('./_config');
 
-// *** mongoose *** ///
-mongoose.connect(config.mongoURI[app.settings.env], function(err, res) {
-  if(err) {
-    console.log('Error connecting to the database. ' + err);
-  } else {
-    console.log('Connected to Database: ' + config.mongoURI[app.settings.env]);
-  }
+var mongoURI = config.mongoURI[app.settings.env];
+mongoose.connect(mongoURI, {useMongoClient:true});
+var MongoDB = mongoose.connection 
+// console.log(MongoDB);
+MongoDB.on('error', function(err) { console.log(err.message); });
+MongoDB.once('open', function() {
+  console.log("mongodb connection open");
+  // console.log(MongoDB);
 });
+
 
 // *** config middleware *** //
 app.use(logger('dev'));
